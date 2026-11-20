@@ -438,6 +438,55 @@ async function resync(){
 })();
 document.querySelectorAll(".tab[hidden]").forEach(b=>b.hidden=false);
 RECS=loadAll();renderList();renderStats();
+/* ===== 主管補簽功能 ===== */
+var OPEN=null,ONLYP=false,SP=null;
+document.querySelector("#pad2").previousElementSibling.textContent="單位主管簽名（選填，可稍後在「稽核紀錄」補簽）";
+function renderList(){
+  const el=$("#vList");
+  if(!RECS.length){el.innerHTML='<section><h2>稽核紀錄</h2><p class="hint">目前還沒有紀錄。送出第一份稽核後會顯示在這裡。</p></section>';return;}
+  const pend=RECS.filter(r=>!r.sig2).length;
+  const list=ONLYP?RECS.filter(r=>!r.sig2):RECS;
+  const sigImg=(s,t)=>s?`<img alt="${t}" src="${ESC(s)}"> `:"";
+  el.innerHTML='<section><div class="lh"><h2>稽核紀錄（'+RECS.length+' 筆，待主管簽核 '+pend+' 筆）</h2><span style="display:flex;gap:8px">'+unsyncedBtn()+'<button type="button" class="ghost" id="csv">匯出 CSV</button></span></div>'+
+  '<label style="display:flex;gap:8px;align-items:center;margin:0 0 8px"><input type="checkbox" id="onlyP"'+(ONLYP?' checked':'')+' style="width:18px;height:18px;accent-color:var(--accent)">只看待主管簽核</label>'+
+  '<p class="hint" style="margin:0 0 6px">紀錄只存在這台裝置的這個瀏覽器中，請定期匯出 CSV 備份。清除瀏覽器資料會一併刪除紀錄。</p>'+
+  (list.length?list.map(r=>{const it=r.items||[],nt=r.notes||[],id=ESC(r.id);
+    const signPart=r.sig2
+      ?`<p>${sigImg(r.sig1,"稽核人員簽名")}${sigImg(r.sig2,"單位主管簽名")}</p><p class="hint">主管簽核時間：${r.sigTime2?stamp(new Date(r.sigTime2)):""}</p>`
+      :`<p>${sigImg(r.sig1,"稽核人員簽名")}</p><p style="margin:10px 0 4px;font-weight:600">單位主管簽核</p>
+        <div class="pad" style="height:120px"><canvas class="sc" width="800" height="300" data-id="${id}"></canvas><div class="ph">主管請在此簽名</div></div>
+        <div class="sigfoot"><span></span><span><button type="button" class="link" data-sclear="${id}">清除重簽</button> <button type="button" class="primary" data-ssave="${id}" style="padding:8px 16px">確認簽核</button></span></div>`;
+    return `<details class="rec"${r.id===OPEN?" open":""}><summary><span>${ESC(fmtR(r))}${cfg().url&&!r.synced?' <small style="color:var(--bad)">未同步</small>':""}${r.sig2?"":' <small style="color:#b7791f">待主管簽核</small>'}</span><span>${ESC(r.auditor)}</span><b>${rt(r.rate)}</b></summary><div class="rb">
+    <p>稽核方式：${ESC((r.method||[]).join("、")||"未選擇")}　生產方式：${ESC(r.birth)}</p>
+    ${ITEMS.map((t,i)=>`<p><span class="tag t-${it[i]||"na"}">${LBL[it[i]]||"未填"}</span> ${i+1}. ${ESC(t)}${nt[i]?`<br><small>改善說明：${ESC(nt[i])}</small>`:""}</p>`).join("")}
+    <p>稽核建議：${ESC(r.advice||"（無）")}</p>
+    ${signPart}
+    <p><button type="button" class="link" data-del="${id}" style="color:var(--bad)">刪除此筆</button></p></div></details>`;}).join(""):'<p class="hint">目前沒有待主管簽核的紀錄。</p>')+'</section>';
+  $("#csv").onclick=exportCsv;const rb=$("#resync");if(rb)rb.onclick=resync;
+  $("#onlyP").onchange=e=>{ONLYP=e.target.checked;renderList();};
+}
+function pt(cv,e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)*cv.width/r.width,y:(e.clientY-r.top)*cv.height/r.height}}
+(function(){
+  const vl=$("#vList");
+  vl.addEventListener("pointerdown",e=>{const cv=e.target;if(!cv.classList||!cv.classList.contains("sc"))return;
+    e.preventDefault();cv.setPointerCapture(e.pointerId);const ctx=cv.getContext("2d");
+    ctx.lineWidth=5;ctx.lineCap="round";ctx.lineJoin="round";ctx.strokeStyle="#0b1f2a";ctx.fillStyle="#0b1f2a";
+    const p=pt(cv,e);ctx.beginPath();ctx.arc(p.x,p.y,2.5,0,7);ctx.fill();SP={cv,last:p};cv.dataset.signed="1";cv.parentElement.classList.add("signed");});
+  vl.addEventListener("pointermove",e=>{if(!SP||e.target!==SP.cv)return;const ctx=SP.cv.getContext("2d"),p=pt(SP.cv,e);
+    ctx.beginPath();ctx.moveTo(SP.last.x,SP.last.y);ctx.lineTo(p.x,p.y);ctx.stroke();SP.last=p;});
+  const endS=()=>{SP=null};vl.addEventListener("pointerup",endS);vl.addEventListener("pointercancel",endS);
+  vl.addEventListener("click",e=>{const d=e.target.dataset||{};
+    if(d.sclear){const c=vl.querySelector('canvas.sc[data-id="'+d.sclear+'"]');if(c){c.getContext("2d").clearRect(0,0,800,300);delete c.dataset.signed;c.parentElement.classList.remove("signed");}}
+    if(d.ssave){const c=vl.querySelector('canvas.sc[data-id="'+d.ssave+'"]');
+      if(!c||!c.dataset.signed){alert("請先在簽名框內簽名");return;}
+      const t=document.createElement("canvas");t.width=400;t.height=150;t.getContext("2d").drawImage(c,0,0,400,150);
+      const arr=loadAll(),r=arr.find(x=>x.id===d.ssave);if(!r)return;
+      r.sig2=t.toDataURL("image/png");r.sigTime2=new Date().toISOString();
+      try{localStorage.setItem(KEY,JSON.stringify(arr))}catch(x){alert("儲存失敗，瀏覽器儲存空間不足");return;}
+      RECS=arr;const nx=ONLYP?RECS.find(x=>!x.sig2):null;OPEN=ONLYP?(nx?nx.id:null):d.ssave;renderList();}
+  });
+})();
+renderList();
 </script>
 </body>
 </html>
