@@ -487,6 +487,83 @@ function pt(cv,e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)
   });
 })();
 renderList();
+/* ===== 匯出此筆 PDF ===== */
+function loadImg(src){return new Promise(res=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>res(null);i.src=src;});}
+function formData(){
+  const s=stats(),birth=document.querySelector("input[name=birth]:checked");
+  return {date:$("#date").value,time:$("#time").value,auditor:$("#auditor").value.trim(),
+    method:[...document.querySelectorAll("input[name=method]:checked")].map(x=>x.value),birth:birth?birth.value:"",
+    items:ITEMS.map((_,i)=>val(i+1)),notes:ITEMS.map((_,i)=>$("#n"+(i+1)).value.trim()),
+    ok:s.ok,bad:s.bad,na:s.na,rate:s.rate,advice:$("#advice").value.trim(),
+    sig1:pads[1].signed?pads[1].cv:null,sig2:pads[2].signed?pads[2].cv:null,sigTime1:pads[1].time,sigTime2:pads[2].time};
+}
+async function recData(r){
+  return Object.assign({},r,{sig1:r.sig1?await loadImg(r.sig1):null,sig2:r.sig2?await loadImg(r.sig2):null,
+    sigTime1:r.sigTime1?new Date(r.sigTime1):null,sigTime2:r.sigTime2?new Date(r.sigTime2):null});
+}
+async function buildPages(d){
+  d=d||formData();
+  const W=1240,H=1754,M=90,CW=W-2*M,pages=[];let cv,c,y;
+  const newPage=()=>{cv=document.createElement("canvas");cv.width=W;cv.height=H;c=cv.getContext("2d");c.fillStyle="#fff";c.fillRect(0,0,W,H);c.textBaseline="top";pages.push(cv);y=M;};
+  const ensure=h=>{if(y+h>H-M-30)newPage();};
+  const wrapT=(t,w,f)=>{c.font=f;const out=[];String(t).split("\n").forEach(p=>{let l="";for(const ch of p){if(c.measureText(l+ch).width>w&&l){out.push(l);l=ch}else l+=ch}out.push(l)});return out;};
+  const para=(t,o={})=>{const{size=26,x=M,w=CW,color="#17262e",weight="400",gap=10}=o;const f=`${weight} ${size}px ${FONT}`;const lh=size*1.55;wrapT(t,w,f).forEach(l=>{ensure(lh);c.font=f;c.fillStyle=color;c.textAlign="left";c.fillText(l,x,y);y+=lh});y+=gap;};
+  const rule=()=>{c.fillStyle="#d3dce1";c.fillRect(M,y,CW,2);y+=18;};
+  const head=t=>{ensure(90);y+=14;para(t,{size:32,weight:"700",color:"#0f5e73",gap:2});rule();};
+  newPage();
+  const lg=$("#logo"),lh2=100,lw2=lg.naturalWidth/lg.naturalHeight*lh2,top0=y;
+  try{c.drawImage(lg,M,top0,lw2,lh2)}catch(e){}
+  const tx=M+lw2+30;
+  para("醫療品質部・病人安全科",{size:24,x:tx,w:CW-lw2-30,color:"#5b6b74",gap:0});
+  para("分娩室數紗作業稽核紀錄",{size:46,x:tx,w:CW-lw2-30,weight:"700",gap:8});
+  y=Math.max(y,top0+lh2+14);rule();
+  head("一、基本資料");
+  [["稽核日期時間",(d.date||"").replace(/-/g,"/")+" "+(d.time||"")],["稽核人員",d.auditor||"未填"],["稽核方式",(d.method||[]).join("、")||"未選擇"],["生產方式",d.birth||"未選擇"]].forEach(([k,v])=>{
+    ensure(44);c.font=`400 26px ${FONT}`;c.fillStyle="#5b6b74";c.textAlign="left";c.fillText(k,M,y);c.fillStyle="#17262e";c.fillText(v,M+190,y);y+=44;});
+  head("二、數紗作業稽核");
+  const COL={ok:"#1b7a4b",bad:"#b3382c",na:"#5b6b74"};
+  ITEMS.forEach((t,i)=>{
+    const n=i+1,v=(d.items||[])[i],f=`400 26px ${FONT}`,lh=40;
+    const ls=wrapT(`${n}. ${t}`,CW-200,f);ensure(ls.length*lh+16);
+    const top=y;ls.forEach(l=>{c.font=f;c.fillStyle="#17262e";c.textAlign="left";c.fillText(l,M,y);y+=lh});
+    c.font=`700 26px ${FONT}`;c.fillStyle=v?COL[v]:"#999";c.textAlign="right";c.fillText(v?LBL[v]:"未填",W-M,top);c.textAlign="left";
+    const note=((d.notes||[])[i]||"").trim();if(v==="bad"&&note)para("改善說明："+note,{size:23,x:M+30,w:CW-30,color:"#b3382c",gap:2});
+    y+=12;});
+  head("三、稽核結果");
+  para(`符合 ${d.ok} 項　不符合 ${d.bad} 項　不適用 ${d.na} 項　符合率 ${d.rate==null?"－":d.rate+"%"}`,{weight:"600"});
+  para("稽核建議",{weight:"600",gap:2});
+  para(d.advice||"（無）",{x:M+30,w:CW-30});
+  ensure(380);head("四、電子簽名");
+  const bw=(CW-40)/2;
+  [1,2].forEach(k=>{const x=M+(k-1)*(bw+40),g=d["sig"+k],tm=d["sigTime"+k];
+    c.font=`600 24px ${FONT}`;c.fillStyle="#17262e";c.textAlign="left";c.fillText(k===1?"稽核人員簽名":"單位主管簽名",x,y);
+    c.strokeStyle="#9aa7ae";c.lineWidth=2;c.strokeRect(x,y+40,bw,200);
+    if(g){const sw=g.naturalWidth||g.width,sh=g.naturalHeight||g.height,r=Math.min((bw-20)/sw,180/sh);try{c.drawImage(g,x+10,y+50,sw*r,sh*r)}catch(e){}}
+    c.font=`400 20px ${FONT}`;c.fillStyle="#5b6b74";c.fillText(g?"簽名時間 "+(tm?stamp(tm):""):"（未簽名）",x,y+252);});
+  y+=300;
+  pages.forEach((p,i)=>{const g=p.getContext("2d");g.font=`400 20px ${FONT}`;g.fillStyle="#5b6b74";g.textAlign="center";g.textBaseline="top";g.fillText(`第 ${i+1} / ${pages.length} 頁`,W/2,H-70);});
+  return pages;
+}
+$("#pdf").onclick=async()=>{
+  const m=$("#msg");m.style.color="";
+  try{const blob=toPDF(await buildPages());await DL.save({filename:`數紗稽核_${$("#date").value||"未填日期"}.pdf`,data:blob});m.textContent="PDF 已匯出";}
+  catch(e){m.style.color="var(--bad)";m.textContent="匯出失敗，請稍後再試";}
+};
+const _renderList=renderList;
+renderList=function(){_renderList();
+  document.querySelectorAll("#vList [data-del]").forEach(b=>{
+    b.parentElement.insertAdjacentHTML("afterbegin",`<button type="button" class="ghost" data-pdf="${b.dataset.del}" style="padding:8px 16px;margin-right:10px">匯出此筆 PDF</button>`);});
+};
+$("#vList").addEventListener("click",async e=>{
+  const id=e.target.dataset&&e.target.dataset.pdf;if(!id)return;
+  const r=loadAll().find(x=>x.id===id);if(!r)return;
+  const b=e.target,old=b.textContent;b.disabled=true;b.textContent="產生中…";
+  try{const pages=await buildPages(await recData(r));
+    await DL.save({filename:`數紗稽核_${r.date||"未填日期"}_${(r.time||"").replace(":","")}.pdf`,data:toPDF(pages)});}
+  catch(x){alert("匯出失敗，請稍後再試");}
+  b.disabled=false;b.textContent=old;
+});
+renderList();
 </script>
 </body>
 </html>
