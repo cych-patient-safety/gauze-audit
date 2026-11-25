@@ -23,7 +23,17 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Noto Sans TC"
 header{padding:8px 0 20px}
 .hd{display:flex;align-items:center;gap:16px}
 .logo{height:64px;width:auto;background:#fff;border-radius:10px;padding:6px 10px;border:1px solid var(--line)}
-header p{margin:0;color:var(--muted);font-size:14px}
+header p{
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.6;
+}
+
+header p:nth-child(2){
+  color:var(--accent);
+  font-weight:600;
+}
 h1{margin:4px 0 0;font-size:26px;line-height:1.3;letter-spacing:.02em}
 section{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:16px}
 h2{margin:0 0 14px;font-size:18px}
@@ -95,7 +105,9 @@ dt{color:var(--muted)}dd{margin:0}
 </head>
 <body>
 <div class="wrap">
-<header class="hd"><img class="logo" id="logo" alt="醫院標誌" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN8AAACABAMAAAB5D6E9AAAAMFBMVEX///////7+///7+fi9q6bXlYaWlZSWlZOWlZKVlZPne2Pnd2Dnd1/nd17ndVy7gHIewVKtAAAPOElEQVR42r1bW3Bbx3n+9gAWQUnA7oHlqlUo3sTIli2ZNyh0W4q6UKZdVzN2LD00vkxdd9hWcaykM3pJO3VnXHv8Qqt56IybZhJ72qRJx5LjduTaqgiRlNXWiggKkBVKHokgQNK6kjx7ADYCRBLbB1zOLnBwU5meF/Lc9tv//7//sv9ZEJQ9iJYSxe/qgjvadEDwAHQj+woz0AkAWA4SZiijlQdkm+9GeFE8w9G+ef9uQPjfDwdIemaE8k7vA8/uwdz59+fngrrg1QCyhTfWHKJFEBn3bf47iDAXjnYsHTxGBAAiHHsO7oKYBPMCH//ITyQNOcoqNNnncS7dTNjjmdv/4puDxg1XkiV+NTZz6Oo4S4DQNU+/W3cqDE0n4+OTfc+GryWrkJC1PBvFxgHYiahz34mlEZ1lTsXU7v5jzKTx5783qmUvYt7Z1u8nRqUSksVtYDW3ay7b3buz/cTord9y5c5p8JXRL2j8+SOnNuQuonbV+W9fHGOJCgHZI08SkJqH524W4ontJ66udslX2OeH/NPP/e1wk/KcPvbtq8EKVUq0fsEAmFsHOC9g038s63nXxPT/vPNvQzklZ49IT18oQxytJJ5GO+sZAHhmNpl5o5D4c1sLJ7j2iTeGmvLx0HjmuGCVqJQtvBJxAQAxti9+oQ5N238UYgUKSl5pWW0zkLtmKlSBSgme3GFm/jfrjoaEMpdfhBvMAlk4LbwGAPOPbE27fykJSUPLH3yRJUXN7d8MuyxvJLUHHq8lroJ3XDbXAMA1HoskykhIaLxfWNMV3pN+liMOWffLKVRzeNbUiTISsvjjj0rzIdc7UpYZ2b71tVUBJq9FeaIkIIv37ozK+qm91Taf9UaydOIuqjuSLT8DAGcJvD2Tqv09Mz5E0zGK9kRJlYBr9zDBi/uhzjvz8UA8LfcbLO2D7/Eq8UDOtpZwfGL4Xg4X8JuE+3pNAKBdBTGmPCD9J7MoIBG+A2M2Q+rh3lYCAC0jakQzDMMoJ7NbY6wYadjSvpQtCV23nvyvBMjSCcmCpstY7NiwYcP6SesVYSZqTBdNmBLryHj0RsIekMX7Hk3aT7MmLiZBHvuGKU0i3L3uxMDx457fCeS8ntRcd3R4/ltTrGJu/SRh6/hE9O2KsiKKERsPCdZzSLrNOz4+kjoPR5v3Xyayw4l4m/A7dy2H5GFSGzYKO0AifAcmi+HBvOIn3h94rPtGZ/9EEDoMODpOnGoEQASN131zEtC+u+MClWb2aF+E2/ghXfCFVcJwGX6ZmbHuWI4hqU39x4guDBAmzj3x0QUwiNT0g9/wA8CbjwxIAZCdYXYs1eJ761U8s4HLdRrodkkvM6smCDU4IAxTHztcDwAzD+7z67qu64F/PxORufHHZiEgSXX2RJUrRv3pBsuEHgDrLuRkT3XvC2XLTmG4/9kLAt79/HndMAzD0Gff6pFGqttlIyFd96xKGOH1j05blkgFucmsynbmoJwlzbUvc3g6Dg5nqm2DjB2WRdRYASCJ++ZVwsRm52bPTVmjEqI9Y4XXrgkqT8681CMufnQsl8aE+5IkYvS+BpYPSDt7VOLy+tEQGR31GlkKA2RHdkpk5lRIDTDhM/Pdb+vWNXPsjHXSdLFAQhLvUA0omvwhIfTRo81pRDOSBs3cbXubqo+731s4GDLkC0csAnDkAxLxeL1qQO2KnwKGHvigOUsN+kBOB6maPAFhznb5lTmYn8mn+7mWx5idqoCxtQGdAzBo4FQjB4AJoDl3e+FUQYA494qpzoEets7du1QJSdynhhij/mhGP9ztH0m7I4MWzVV1P8xfOYrUh3lKXo5YnBZEBaTtPYrLi2Z/jvTcffJ0Q7roYlmmp7aaBXFjOX/ZY15qZRbDFUAS9+Up9KpkD9N9clqAcoDlBlgM8sJatqAklW7e16YpLqEyhteNEi75mPucl9M027IiFsZ4UXjBCm9CiTT5LiGahpRaW5ijHzQIcEuN2nAllY37PUvqqAyYL2Dsij/P/nrgdCpCtGeyj5mVVTNzrdKCWysqIK8LsDwBDPdJxmWtHRMV4PG71DKwFNryBBRNQ6EChZnudwG02SfKouVaUAK3JCRxryJgbClPoWkzBgAwVHdYahDckpC19ygC1h/VbRghdIBY3KysGhYXrBRslfpinZIGY3MhW/sY8ozrKhTRzC7CNMstyIIqYF2AFl+mZh+qVrcQlg2pT+F4zB/iKIu4GKlEp8L9oTRFLUuZNq4IeJ5WQgazSgkJsmUi3Vwvv+wYNAV+PUdGQk3xCWPNSEk8fq9ogmYSMIkplPEOllRotWSRdOfOSKiUthBrR1ZSiXKVlyENcVC5eowNUl6SK8K4V/DFjOObPaZM0bNlXpsEYOgQX6kQZodFkKATAOhDig8GgjaUsWoPh3Nv5r87THbpcsQEIERaQsKksCbqP7PTqKVFx5/aXCxx0IdlczgBkLisUc1tF0XZV1nmKrn9fq5J6MvNc7ZE0FmXW5YucDgB0M0yR/kntpTZ8r3sfy/nxuYP7cpe/KQ4SeMvWSevpVXqjUga3fp9e6cfzPxVlrBhlG+7ku7copQL5gRI/GnJKWI/L+ITWmP6r9LTI6xsdcO2WOml7XVoAIhs+8a5FQ6eYl3Ian8BToBukZ1wKbSyYZs4LBPSxSjXAFPWYcxPy1YmVUbS7hxBzBSHBqnOBES9UTbtVnewr1mEig8DGkBScvOmaKa/RwlFy7DlcccoNNAOWaNDdGUlJPEjlv5aI4AGyLlXX2mOwmtlT+GKcmiKC4k1Ib6yePS3pdya4oBGtKctmWOTKywfcbzUmDuZPkQBTXX7CbrCiLHuvIyjiTa5vjex0hr93Bq9mwNwMk2iXyooKliSVMPR70iv3Q0JQIM3IplQACvqFpoVZhAfYgA0RYkTbIU1+nunpbO3BQCn1iik4qJUyAjb5MNs/aaV16h4MJp+vW1SimslVNqb/ecfuVVW5ZpSl+2rmW1WUIld5gKAU2qjxOZK4F3KlU5RPU1xA5gdzIVJm4BBSMuI5YXmMcoBEOfrOSual4OVxBnnS5H8sqMIzZxfWuWBaHhikudbpBScVJe2tGT+WwqUrEtpj/WNHySZdjmnVy5ISyAaVrRKZSWsV1YIhZR5d8gK3NNvpPO8s5FIbl8h2/VsM7WkF9Fty41SmPkbGz5X79uslIB/LjkhSWb44XTcu1uTMhW+9DkF029mKiet+uWsyAHFSlrw8KfW0J6urEM6VzofSQJKJfPMl8Hc1gj+a8Ej8cOfyov0XPff+f8iIF2dC5raPUy+gsyoLxyXBCQXX6XW6pT933KsrWMQ46lZqyuL5S4rQSj5sK1KME+xdRPd/sMpLokrfTDShLwWry7/CoA4WnU7xmwZloaa3yZ9MNKs5iepbDeHaFRqiOOFbSJCuwbkTUqxhFTtahUGKukhr1TYcqzuLdhAQxeOy5WFaHqRymqUdEoq8kmpzIsILL2zM8+Mevy5JVkLsVVyY0sbk+a+p7LoHZFW3Iyc+YlqRmJ0DVyQNdL0grwAlVWaItU7QqPYdvawISNS549H5Eeiq0Y47AGhtVZgRVOh6X0w657abzBZocsyY2jTC0q41oQ1OzLFyicgojVkn9IYgBi0wD9YxCFG14BsUzK9aiSvDyYv0DblIdBeUpiccp9YeRBwRjnY0E9bM4iEbj9+Wp52qu0FtQ2jLUtliadJpSlb2F1owQ6FpGyegTSc+SiDSOPfDcjdczL9nyPqmGpZohqRmHttrCqtRZYZGAFANt58s9UEoMef71a+r3i6/4rmtxbnGyQjKk/Tzp2FVo3vZPKUsgXjlsOtBMToOHJaefzzg/lLao2H5QnJNmPxdRG2Kc+raacVKJo4Mi0Xos0+tUno1Pf9YSXwGV0FK1xNiS5kZmcOUTd7e1iqqVEV8H6rBSEWIxzZPQTa2A/2G/GH3crjqU3fKugZaBBeWcS9WTfRjc49UZCZBkWpNCq3/03Jb/TBv9//xICqj5lVPy8omTSR+lBm1UyvoTNAZ4bvQJgBdK8cm0l8r7Uc0qjsqKL503d+fEHxYaN7X+EXOicob1CsCD90YcDnS+kAhHPniFRctEu9Y/4LwaTuMjaeccshTsz7+m2Wf07wVIOkCDLVi7kgOvWWdIOBTO7l2deIcPik5rg+z+CUmkrErUQJ4fyV36b16gC5uVve4VVzq9Plbd7W4cnsS3TdXj9GdFcCeu0dR5+0O1K4P+aurvWSwmuV/cKT7ftMm3TnhBBTctImnnBLC1LhbK8XHm/vXBCAgc4HdkgCEsoRfyZVLMbP9fbbrqcJwB5TmQjDai0DAG+6eh6RRugtjfJODfNykOtb/jVkn2CE45cvMrt87gBcqx9Td83V1irKcV3ftHVV7ZqtHZ6IXFKuH+OJxLXrL9qXbbcbvpXkRVZAxPF6mQaUoTUCYlIWG+ZXXhMAi79fbyffdNfvF2lQOADodQlXScBa13XDMHXloeQ5ngCSnvFDNrsmp3Y8d5bab+/XACyXX/nqet5mcVE3wgEI89y+Pfnrbn1y98GhYh/oHACSN76erLpLGDDSEujha/1RVUHXuvuPsWIFoAYAYqraNZuoy/Z0DPdPDrcq91K+j/x60QEdAECX17uqFfCzrImSnuWGeSkBGLPjr5p3ile1AGCea6gOz6iby6UBYY6+1St1ks2ugVKfyNM9Bc9yTTW7tsWGk2clDurhz7+TM6PnkT8bKUJQCTAZ+fpNO6UK01bVsdkPmDRmgo1b/n/ly9dYKUZkuiap+1ptiCq8+g0bRL5xUI0iCTrRmqmF57/2crIkA7MbB05OFX4DErGlYRvjGk1DobyHzaW3dnMAEOpGweKAKfdoc8HEYnVHbeZhNJ8s+CAmzNE/ehQAeFe57wLZRlTyutZxvVaVr37wrCfxu+pVGM1X/LWFStMvPmY0JsTiX48kKgMEu+xov560LGbcrfefYuY1dR4i1nQ1ELXxsqRn/C/PsthDf8IqBUzQS6SD3sgMbiSaPX4/42CXSccdXpttiq7+jcEJ+zSQvHb5VXH/H5rlYhaRMnh8d0ujMDgAL8PV8wHdAMDiuw/weQ4ApAkpv58UCcts4dbw9vqynRf5FxyUd+pfbeUAUuHJuWD6t3aEmp3ePekHJsJGoGhbiNCHP+wrv4WIKK+kf9kHGNKv+AjljnaW1qj0iz+7leMzH5RvLf0vaXD5HDOV2PAAAAAASUVORK5CYII="><div><p>醫療品質部・病人安全科</p>
+<header class="hd"><img class="logo" id="logo" alt="醫院標誌" src="data:image/png;base64,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"><div>
+    <p>戴德森醫療財團法人嘉義基督教醫院</p>
+    <p>醫療品質部｜病人安全科</p>
   <h1>分娩室數紗作業稽核電子表單</h1></div></header>
 <nav class="tabs"><button type="button" class="tab" data-t="form" aria-selected="true">填寫稽核</button><button type="button" class="tab" data-t="list" hidden>稽核紀錄</button><button type="button" class="tab" data-t="stats" hidden>統計</button><button type="button" class="tab" data-t="set">設定</button></nav>
 
@@ -274,8 +286,30 @@ function buildPages(){
   const lg=$("#logo"),lh2=100,lw2=lg.naturalWidth/lg.naturalHeight*lh2,top0=y;
   try{c.drawImage(lg,M,top0,lw2,lh2)}catch(e){}
   const tx=M+lw2+30;
-  para("戴德森醫療財團法人嘉義基督教醫院 醫療品質部・病人安全科",{size:24,x:tx,w:CW-lw2-30,color:"#5b6b74",gap:0});
-  para("分娩室數紗作業稽核紀錄",{size:46,x:tx,w:CW-lw2-30,weight:"700",gap:8});
+  para("戴德森醫療財團法人嘉義基督教醫院",{
+  size:24,
+  x:tx,
+  w:CW-lw2-30,
+  color:"#5b6b74",
+  gap:0
+});
+
+para("醫療品質部｜病人安全科",{
+  size:24,
+  x:tx,
+  w:CW-lw2-30,
+  color:"#0f5e73",
+  weight:"600",
+  gap:4
+});
+
+para("分娩室數紗作業稽核紀錄",{
+  size:46,
+  x:tx,
+  w:CW-lw2-30,
+  weight:"700",
+  gap:8
+});
   y=Math.max(y,top0+lh2+14);rule();
   const s=stats();
   const methods=[...document.querySelectorAll("input[name=method]:checked")].map(x=>x.value).join("、")||"未選擇";
@@ -515,8 +549,30 @@ async function buildPages(d){
   const lg=$("#logo"),lh2=100,lw2=lg.naturalWidth/lg.naturalHeight*lh2,top0=y;
   try{c.drawImage(lg,M,top0,lw2,lh2)}catch(e){}
   const tx=M+lw2+30;
-  para("戴德森醫療財團法人嘉義基督教醫院 醫療品質部・病人安全科",{size:24,x:tx,w:CW-lw2-30,color:"#5b6b74",gap:0});
-  para("分娩室數紗作業稽核紀錄",{size:46,x:tx,w:CW-lw2-30,weight:"700",gap:8});
+ para("戴德森醫療財團法人嘉義基督教醫院",{
+  size:24,
+  x:tx,
+  w:CW-lw2-30,
+  color:"#5b6b74",
+  gap:0
+});
+
+para("醫療品質部｜病人安全科",{
+  size:24,
+  x:tx,
+  w:CW-lw2-30,
+  color:"#0f5e73",
+  weight:"600",
+  gap:4
+});
+
+para("分娩室數紗作業稽核紀錄",{
+  size:46,
+  x:tx,
+  w:CW-lw2-30,
+  weight:"700",
+  gap:8
+});
   y=Math.max(y,top0+lh2+14);rule();
   head("一、基本資料");
   [["稽核日期時間",(d.date||"").replace(/-/g,"/")+" "+(d.time||"")],["稽核人員",d.auditor||"未填"],["稽核方式",(d.method||[]).join("、")||"未選擇"],["生產方式",d.birth||"未選擇"]].forEach(([k,v])=>{
