@@ -217,8 +217,28 @@ ITEMS.forEach((t,i)=>{
 const val=n=>{const c=document.querySelector(`input[name=r${n}]:checked`);return c?c.value:null};
 function stats(){
   let ok=0,bad=0,na=0;
-  ITEMS.forEach((_,i)=>{const v=val(i+1);if(v==="ok")ok++;else if(v==="bad")bad++;else if(v==="na")na++;
-    const it=$("#it"+(i+1));it.classList.toggle("bad",v==="bad");if(v)it.classList.remove("missing");});
+  ITEMS.forEach((_,i)=>{
+  const n=i+1;
+  const v=val(n);
+
+  if(v==="ok")ok++;
+  else if(v==="bad")bad++;
+  else if(v==="na")na++;
+
+  const it=$("#it"+n);
+  const note=it.querySelector(".note");
+
+  // 選擇不符合時顯示改善說明欄位
+  if(v==="bad"){
+    it.classList.add("bad");
+    note.style.display="block";
+  }else{
+    it.classList.remove("bad");
+    note.style.display="none";
+  }
+
+  if(v)it.classList.remove("missing");
+});
   $("#sOk").textContent=ok;$("#sBad").textContent=bad;$("#sNa").textContent=na;
   const d=ok+bad;$("#sRate").textContent=d?Math.round(ok/d*1000)/10+"%":"－";
   return{ok,bad,na,rate:d?Math.round(ok/d*1000)/10:null};
