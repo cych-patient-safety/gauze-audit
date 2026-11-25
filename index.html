@@ -124,7 +124,7 @@ dt{color:var(--muted)}dd{margin:0}
       <label><input type="checkbox" name="method" value="NIS紀錄查核">NIS紀錄查核</label>
       <label><input type="checkbox" name="method" value="口述">口述</label>
     </div></div>
-  <div style="margin-top:16px"><label class="f">生產方式</label>
+  <div style="margin-top:16px"><label class="f">懷孕胎數</label>
     <div class="chips">
       <label><input type="radio" name="birth" value="單胞胎">單胞胎</label>
       <label><input type="radio" name="birth" value="雙胞胎">雙胞胎</label>
@@ -243,7 +243,7 @@ document.querySelectorAll("[data-clear]").forEach(b=>b.onclick=()=>pads[b.datase
 $("#submit").onclick=()=>{
   const errs=[];
   if(!$("#auditor").value.trim())errs.push("稽核人員姓名");
-  if(!document.querySelector("input[name=birth]:checked"))errs.push("生產方式");
+  if(!document.querySelector("input[name=birth]:checked"))errs.push("懷孕胎數");
   const miss=ITEMS.map((_,i)=>i+1).filter(n=>!val(n));
   miss.forEach(n=>$("#it"+n).classList.add("missing"));
   if(miss.length)errs.push("稽核項目 "+miss.join("、"));
@@ -262,7 +262,7 @@ $("#submit").onclick=()=>{
    <dt>稽核日期時間</dt><dd>${esc($("#date").value.replace(/-/g,"/"))} ${esc($("#time").value)}</dd>
    <dt>稽核人員</dt><dd>${esc($("#auditor").value.trim())}</dd>
    <dt>稽核方式</dt><dd>${methods}</dd>
-   <dt>生產方式</dt><dd>${document.querySelector("input[name=birth]:checked").value}</dd>
+   <dt>懷孕胎數</dt><dd>${document.querySelector("input[name=birth]:checked").value}</dd>
    <dt>結果</dt><dd>${tag("ok")} ${s.ok}　${tag("bad")} ${s.bad}　${tag("na")} ${s.na}　符合率 ${s.rate===null?"－":s.rate+"%"}</dd>
    ${bads.length?`<dt>不符合項目</dt><dd>${bads.map(b=>`${b.n}. ${esc(b.t)}${b.note?"<br>改善說明："+esc(b.note):""}`).join("<br>")}</dd>`:""}
    <dt>稽核建議</dt><dd>${esc($("#advice").value.trim()).replace(/\n/g,"<br>")||"（無）"}</dd>
@@ -290,7 +290,7 @@ function buildPages(){
   size:24,
   x:tx,
   w:CW-lw2-30,
-  color:"#5b6b74",
+  color:"#0f5e73",
   gap:0
 });
 
@@ -315,7 +315,7 @@ para("分娩室數紗作業稽核紀錄",{
   const methods=[...document.querySelectorAll("input[name=method]:checked")].map(x=>x.value).join("、")||"未選擇";
   const birth=document.querySelector("input[name=birth]:checked");
   head("一、基本資料");
-  [["稽核日期時間",$("#date").value.replace(/-/g,"/")+" "+$("#time").value],["稽核人員",$("#auditor").value.trim()||"未填"],["稽核方式",methods],["生產方式",birth?birth.value:"未選擇"]].forEach(([k,v])=>{
+  [["稽核日期時間",$("#date").value.replace(/-/g,"/")+" "+$("#time").value],["稽核人員",$("#auditor").value.trim()||"未填"],["稽核方式",methods],["懷孕胎數",birth?birth.value:"未選擇"]].forEach(([k,v])=>{
     ensure(44);c.font=`400 26px ${FONT}`;c.fillStyle="#5b6b74";c.textAlign="left";c.fillText(k,M,y);c.fillStyle="#17262e";c.fillText(v,M+190,y);y+=44;});
   head("二、數紗作業稽核");
   const COL={ok:"#1b7a4b",bad:"#b3382c",na:"#5b6b74"};
@@ -413,7 +413,7 @@ function renderList(){
   el.innerHTML='<section><div class="lh"><h2>稽核紀錄（'+RECS.length+' 筆）</h2><span style="display:flex;gap:8px">'+unsyncedBtn()+'<button type="button" class="ghost" id="csv">匯出 CSV</button></span></div><p class="hint" style="margin:0 0 6px">紀錄只存在這台裝置的這個瀏覽器中，請定期匯出 CSV 備份。清除瀏覽器資料會一併刪除紀錄。</p>'+
   RECS.map(r=>{const it=r.items||[],nt=r.notes||[];
     return `<details class="rec"><summary><span>${ESC(fmtR(r))}${cfg().url&&!r.synced?' <small style="color:var(--bad)">未同步</small>':""}</span><span>${ESC(r.auditor)}</span><b>${rt(r.rate)}</b></summary><div class="rb">
-    <p>稽核方式：${ESC((r.method||[]).join("、")||"未選擇")}　生產方式：${ESC(r.birth)}</p>
+    <p>稽核方式：${ESC((r.method||[]).join("、")||"未選擇")}　懷孕胎數：${ESC(r.birth)}</p>
     ${ITEMS.map((t,i)=>`<p><span class="tag t-${it[i]||"na"}">${LBL[it[i]]||"未填"}</span> ${i+1}. ${ESC(t)}${nt[i]?`<br><small>改善說明：${ESC(nt[i])}</small>`:""}</p>`).join("")}
     <p>稽核建議：${ESC(r.advice||"（無）")}</p>
     <p><button type="button" class="link" data-del="${ESC(r.id)}" style="color:var(--bad)">刪除此筆</button></p>
@@ -422,7 +422,7 @@ function renderList(){
 }
 async function exportCsv(){
   const m=$("#msg");if(!DL){alert("目前環境無法匯出檔案");return;}
-  const head=["稽核日期","稽核時間","稽核人員","稽核方式","生產方式",...ITEMS.map((_,i)=>"項目"+(i+1)),"符合","不符合","不適用","符合率","不符合改善說明","稽核建議"];
+  const head=["稽核日期","稽核時間","稽核人員","稽核方式","懷孕胎數",...ITEMS.map((_,i)=>"項目"+(i+1)),"符合","不符合","不適用","符合率","不符合改善說明","稽核建議"];
   const q=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';
   const rows=RECS.map(r=>[r.date,r.time,r.auditor,(r.method||[]).join("、"),r.birth,...ITEMS.map((_,i)=>LBL[(r.items||[])[i]]||""),r.ok,r.bad,r.na,r.rate==null?"":r.rate+"%",rowOf(r)[17],r.advice]);
   const csv="\ufeff"+[head,...rows].map(a=>a.map(q).join(",")).join("\r\n");
@@ -492,7 +492,7 @@ function renderList(){
         <div class="pad" style="height:120px"><canvas class="sc" width="800" height="300" data-id="${id}"></canvas><div class="ph">主管請在此簽名</div></div>
         <div class="sigfoot"><span></span><span><button type="button" class="link" data-sclear="${id}">清除重簽</button> <button type="button" class="primary" data-ssave="${id}" style="padding:8px 16px">確認簽核</button></span></div>`;
     return `<details class="rec"${r.id===OPEN?" open":""}><summary><span>${ESC(fmtR(r))}${cfg().url&&!r.synced?' <small style="color:var(--bad)">未同步</small>':""}${r.sig2?"":' <small style="color:#b7791f">待主管簽核</small>'}</span><span>${ESC(r.auditor)}</span><b>${rt(r.rate)}</b></summary><div class="rb">
-    <p>稽核方式：${ESC((r.method||[]).join("、")||"未選擇")}　生產方式：${ESC(r.birth)}</p>
+    <p>稽核方式：${ESC((r.method||[]).join("、")||"未選擇")}　懷孕胎數：${ESC(r.birth)}</p>
     ${ITEMS.map((t,i)=>`<p><span class="tag t-${it[i]||"na"}">${LBL[it[i]]||"未填"}</span> ${i+1}. ${ESC(t)}${nt[i]?`<br><small>改善說明：${ESC(nt[i])}</small>`:""}</p>`).join("")}
     <p>稽核建議：${ESC(r.advice||"（無）")}</p>
     ${signPart}
@@ -553,7 +553,7 @@ async function buildPages(d){
   size:24,
   x:tx,
   w:CW-lw2-30,
-  color:"#5b6b74",
+  color:"#0f5e73",
   gap:0
 });
 
@@ -575,7 +575,7 @@ para("分娩室數紗作業稽核紀錄",{
 });
   y=Math.max(y,top0+lh2+14);rule();
   head("一、基本資料");
-  [["稽核日期時間",(d.date||"").replace(/-/g,"/")+" "+(d.time||"")],["稽核人員",d.auditor||"未填"],["稽核方式",(d.method||[]).join("、")||"未選擇"],["生產方式",d.birth||"未選擇"]].forEach(([k,v])=>{
+  [["稽核日期時間",(d.date||"").replace(/-/g,"/")+" "+(d.time||"")],["稽核人員",d.auditor||"未填"],["稽核方式",(d.method||[]).join("、")||"未選擇"],["懷孕胎數",d.birth||"未選擇"]].forEach(([k,v])=>{
     ensure(44);c.font=`400 26px ${FONT}`;c.fillStyle="#5b6b74";c.textAlign="left";c.fillText(k,M,y);c.fillStyle="#17262e";c.fillText(v,M+190,y);y+=44;});
   head("二、數紗作業稽核");
   const COL={ok:"#1b7a4b",bad:"#b3382c",na:"#5b6b74"};
