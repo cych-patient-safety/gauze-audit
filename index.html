@@ -23,16 +23,22 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Noto Sans TC"
 header{padding:8px 0 20px}
 .hd{display:flex;align-items:center;gap:16px}
 .logo{height:64px;width:auto;background:#fff;border-radius:10px;padding:6px 10px;border:1px solid var(--line)}
-header p{
+/* 醫院名稱 */
+header p:first-child{
   margin:0;
-  color:var(--muted);
+  color:var(--accent);
   font-size:13px;
+  font-weight:700;
   line-height:1.6;
 }
 
+/* 醫療品質部・病人安全科 */
 header p:nth-child(2){
+  margin:0;
   color:var(--accent);
-  font-weight:600;
+  font-size:13px;
+  font-weight:700;
+  line-height:1.6;
 }
 h1{margin:4px 0 0;font-size:26px;line-height:1.3;letter-spacing:.02em}
 section{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:16px}
